@@ -32,6 +32,36 @@ local char = plr.Character or plr.CharacterAdded:Wait()
 local hum = char:WaitForChild("Humanoid")
 local root = char:WaitForChild("HumanoidRootPart")
 
+getgenv.aam = {}
+local aam = getgenv.aam
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+aam.handshakenclients = {}
+aam.id = "rbxassetid://248263260"
+aam.mainid = "rbxassetid://176236333"
+aam.recievedconfirmationid = "rbxassetid://181526230"
+aam.maincommandid = "rbxassetid://259438880"
+aam.cansend = true
+aam.commands = {}
+aam.waitingforaccounttype = true
+aam.alts = {}
+
+aam.mainaccount = nil
+
+aam.animations = {
+	check = Instance.new("Animation"),
+	main = Instance.new("Animation")
+}
+
+aam.tracks = {
+	check = nil,
+	main = nil
+}
+
+aam.fixid = fixid
+aam.addCommandEntry = addCommandEntry
+
 -------------------------------------------------------------------------------------------------------------------------------
 
 function updcharrefs(character)
@@ -103,22 +133,11 @@ end
 
 -------------------------------------------------------------------------------------------------------------------------------
 
-aamhandler = {}
-aamhandler.handshakenclients = {}
-aamhandler.id = "rbxassetid://248263260"
-aamhandler.mainid = "rbxassetid://176236333"
-aamhandler.recievedconfirmationid = "rbxassetid://181526230"
-aamhandler.maincommandid = "rbxassetid://259438880"
-aamhandler.cansend = true
-aamhandler.commands = {}
-aamhandler.waitingforaccounttype = true
-aamhandler.alts = {}
-
-local function ok(state) aamhandler.alt = state aamhandler.waitingforaccounttype = false end
+local function ok(state) aam.alt = state aam.waitingforaccounttype = false end
 descision("what are you", 999, "main", "alt", function() ok(false) end, function() ok(true) end)
 
-repeat t() until not aamhandler.waitingforaccounttype
-if aamhandler.alt then hi("now scanning for main account signal", 1) gui.Parent = reps end
+repeat t() until not aam.waitingforaccounttype
+if aam.alt then hi("now scanning for main account signal", 1) gui.Parent = reps end
 
 -------------------------------------------------------------------------------------------------------------------------------
 
@@ -430,12 +449,12 @@ local function runCommandBar()
 		local args = table.concat(parts, " ", 2)
 
 		if cmd == "tptool" or cmd == "walktotool" then
-			local commandFunc = aamhandler.commands[cmd]
+			local commandFunc = aam.commands[cmd]
 			if commandFunc then
 				commandFunc(args)
 			end
 		else
-			aamhandler:broadcastcommand(input)
+			aam.broadcastcommand(input)
 		end
 	end
 end
@@ -469,7 +488,7 @@ layout.Padding = UDim.new(0, 2)
 layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.Parent = commandslist
 
-local function addCommandEntry(commandName, commandDescription)
+function addCommandEntry(commandName, commandDescription)
 	local entry = Instance.new("TextLabel")
 	entry.Name = commandName
 	entry.Size = UDim2.new(1, 0, 0, 14)
@@ -485,27 +504,15 @@ end
 
 -------------------------------------------------------------------------------------------------------------------------------
 
-aamhandler.mainaccount = nil
-
-aamhandler.animations = {
-	check = Instance.new("Animation"),
-	main = Instance.new("Animation")
-}
-
-aamhandler.tracks = {
-	check = nil,
-	main = nil
-}
-
 local slotButtons = {slot1, slot2, slot3, slot4, slot5}
 local slotImages = {user1, user2, user3, user4, user5}
 
 local function refreshGui()
 	for i, slotImage in ipairs(slotImages) do
-		local data = aamhandler.alts[i]
+		local data = aam.alts[i]
 		if data then
 			slotImage.Image = "rbxthumb://type=AvatarHeadShot&id=" .. data.UserId .. "&w=420&h=420"
-			if i == #aamhandler.alts then
+			if i == #aam.alts then
 				profilepicturedisplay.Image = slotImage.Image
 				displaynamedisplay.Text = data.DisplayName
 				usernamedisplay.Text = "(@" .. data.Name .. ")"
@@ -519,7 +526,7 @@ end
 local selectedconn = nil
 
 local function updateMainDisplay(index)
-	for _, altData in ipairs(aamhandler.alts) do
+	for _, altData in ipairs(aam.alts) do
 		local altPlayer = plrs:FindFirstChild(altData.Name)
 		if altPlayer and altPlayer.Character then
 			local existing = altPlayer.Character:FindFirstChild("aamhighlight")
@@ -527,7 +534,7 @@ local function updateMainDisplay(index)
 		end
 	end
 
-	local data = aamhandler.alts[index]
+	local data = aam.alts[index]
 	local targetButton = slotButtons[index]
 	selected.Parent = targetButton or reps
 	altiddisplay.Text = "alt id: " .. tostring(index)
@@ -575,11 +582,11 @@ for i, button in ipairs(slotButtons) do
 	end)
 end
 
-function aamhandler:confirmTomain()
+function aam.confirmTomain()
 	local animator = hum:FindFirstChildOfClass("Animator")
 	if animator then
 		local confirmAnim = Instance.new("Animation")
-		confirmAnim.AnimationId = fixid(aamhandler.recievedconfirmationid)
+		confirmAnim.AnimationId = fixid(aam.recievedconfirmationid)
 		local track = animator:LoadAnimation(confirmAnim)
 		track:Play()
 		track:AdjustWeight(0.0001)
@@ -587,31 +594,31 @@ function aamhandler:confirmTomain()
 	end
 end
 
-function aamhandler:addcmd(name, func)
-	aamhandler.commands[name:lower()] = func
+function aam.addcmd(name, func)
+	aam.commands[name:lower()] = func
 end
 
-function aamhandler:broadcastcommand(inputString)
-	if aamhandler.alt or not aamhandler.cansend then return end
-	aamhandler.cansend = false
+function aam.broadcastcommand(inputString)
+	if aam.alt or not aam.cansend then return end
+	aam.cansend = false
 
-	local fullId = aamhandler.maincommandid .. " " .. inputString
-	aamhandler.animations.main.AnimationId = fullId
+	local fullId = aam.maincommandid .. " " .. inputString
+	aam.animations.main.AnimationId = fullId
 
 	local animator = hum:FindFirstChildOfClass("Animator")
-	local track = animator:LoadAnimation(aamhandler.animations.main)
+	local track = animator:LoadAnimation(aam.animations.main)
 
 	track:Play()
 	track:AdjustWeight(0.0001)
 
 	task.delay(0.1, function()
 		track:Stop()
-		aamhandler.cansend = true
+		aam.cansend = true
 	end)
 end
 
 local function getMyAltId()
-	for i, data in ipairs(aamhandler.alts) do
+	for i, data in ipairs(aam.alts) do
 		if data.UserId == game.Players.LocalPlayer.UserId then
 			return i
 		end
@@ -619,9 +626,9 @@ local function getMyAltId()
 	return nil
 end
 
-function aamhandler:processincoming(player, animId)
+function aam.processincoming(player, animId)
 	local cleanId = fixid(animId)
-	local prefix = aamhandler.maincommandid
+	local prefix = aam.maincommandid
 
 	if cleanId:sub(1, #prefix) == prefix then
 		local fullCmdString = cleanId:sub(#prefix + 2)
@@ -636,7 +643,7 @@ function aamhandler:processincoming(player, animId)
 			local targetIds = idList:split(",")
 
 			if idList:lower() == "all" or table.find(targetIds, myId) then
-				local commandFunc = aamhandler.commands[cmd]
+				local commandFunc = aam.commands[cmd]
 				if commandFunc then
 					task.spawn(function() commandFunc(args or "") end)
 				end
@@ -655,23 +662,23 @@ function fixid(id)
 	return id
 end
 
-function aamhandler:shakehands(player, animator)
+function aam.shakehands(player, animator)
 	animator.AnimationPlayed:Connect(function(track)
 		if not track or not track.Animation then return end
 		local animId = fixid(track.Animation.AnimationId)
 
-		if aamhandler.alt then
-			if animId:find(aamhandler.mainid) then
+		if aam.alt then
+			if animId:find(aam.mainid) then
 				hi("main account signal detected", 1)
-				aamhandler.mainaccount = player 
-				aamhandler:confirmTomain()
+				aam.mainaccount = player 
+				aam.confirmTomain()
 			end
 
-			aamhandler:processincoming(player, animId)
+			aam.processincoming(player, animId)
 		else
-			if animId == fixid(aamhandler.recievedconfirmationid) then
+			if animId == fixid(aam.recievedconfirmationid) then
 				local alreadyExists = false
-				for _, data in pairs(aamhandler.alts) do
+				for _, data in pairs(aam.alts) do
 					if data.UserId == player.UserId then alreadyExists = true break end
 				end
 
@@ -682,28 +689,28 @@ function aamhandler:shakehands(player, animator)
 						UserId = player.UserId,
 						Timestamp = os.date("%H:%M:%S")
 					}
-					table.insert(aamhandler.alts, newAlt)
+					table.insert(aam.alts, newAlt)
 
 					refreshGui()
-					updateMainDisplay(#aamhandler.alts)
+					updateMainDisplay(#aam.alts)
 				end
 			end
 
-			if animId == fixid(aamhandler.id) and math.abs(track.WeightTarget - 0.001) < 0.001 then
-				if not table.find(aamhandler.handshakenclients, player.Name) then
-					table.insert(aamhandler.handshakenclients, player.Name)
+			if animId == fixid(aam.id) and math.abs(track.WeightTarget - 0.001) < 0.001 then
+				if not table.find(aam.handshakenclients, player.Name) then
+					table.insert(aam.handshakenclients, player.Name)
 				end
 			end
 		end
 	end)
 end
 
-function aamhandler:monitor(player)
+function aam.monitor(player)
 	local function added(char)
 		local hum = char:WaitForChild("Humanoid", 10)
 		local animator = hum and hum:WaitForChild("Animator", 10)
 		if animator then
-			aamhandler:shakehands(player, animator)
+			aam.shakehands(player, animator)
 		end
 	end
 
@@ -713,22 +720,22 @@ end
 
 task.spawn(function()
 	repeat t() until char
-	for _, plr in ipairs(plrs:GetPlayers()) do aamhandler:monitor(plr) end plrs.PlayerAdded:Connect(function(plr) aamhandler:monitor(plr) end)
+	for _, plr in ipairs(plrs:GetPlayers()) do aam.monitor(plr) end plrs.PlayerAdded:Connect(function(plr) aam.monitor(plr) end)
 end)
 
-function aamhandler:requesthandshake()
+function aam.requesthandshake()
 	if char then
-		local broadcastId = aamhandler.alt and aamhandler.id or aamhandler.mainid
+		local broadcastId = aam.alt and aam.id or aam.mainid
 
-		aamhandler.animations.check.AnimationId = fixid(broadcastId)
+		aam.animations.check.AnimationId = fixid(broadcastId)
 		local animator = hum:FindFirstChildOfClass("Animator")
 
-		if not aamhandler.tracks.check then
-			aamhandler.tracks.check = animator:LoadAnimation(aamhandler.animations.check)
+		if not aam.tracks.check then
+			aam.tracks.check = animator:LoadAnimation(aam.animations.check)
 		end
 
-		if animator and aamhandler.tracks.check then
-			local track = aamhandler.tracks.check
+		if animator and aam.tracks.check then
+			local track = aam.tracks.check
 			track.Priority = Enum.AnimationPriority.Action
 			track:Play()
 			track:AdjustWeight(0.0001)
@@ -741,37 +748,22 @@ end
 
 -------------------------------------------------------------------------------------------------------------------------------
 
-task.spawn(function()
-	repeat task.wait() until plrs.LocalPlayer.Character
-	for _, plr in ipairs(plrs:GetPlayers()) do aamhandler:monitor(plr) end
-	plrs.PlayerAdded:Connect(function(plr) aamhandler:monitor(plr) end)
-end)
-
-task.spawn(function()
-	if not getgenv.aamhandler.checking then
-		while task.wait(5) do aamhandler:requesthandshake() end
-	end
-	getgenv.aamhandler.checking = true
-end)
-
--------------------------------------------------------------------------------------------------------------------------------
-
 plrs.PlayerRemoving:Connect(function(player)
-	if aamhandler.mainaccount == player then
-		aamhandler.mainaccount = nil
-		if getgenv.aamhandler.followconn then getgenv.aamhandler.followconn:Disconnect() getgenv.aamhandler.followconn = nil end
+	if aam.mainaccount == player then
+		aam.mainaccount = nil
+		if aam.followconn then aam.followconn:Disconnect() aam.followconn = nil end
 		hi("main account left")
 		return
 	end
 
-	for i, altData in ipairs(aamhandler.alts) do
+	for i, altData in ipairs(aam.alts) do
 		if altData.UserId == player.UserId then
-			if getgenv.aamhandler.followconn then
-				getgenv.aamhandler.followconn:Disconnect()
-				getgenv.aamhandler.followconn = nil
+			if aam.followconn then
+				aam.followconn:Disconnect()
+				aam.followconn = nil
 			end
 
-			table.remove(aamhandler.alts, i)
+			table.remove(aam.alts, i)
 
 			for _, slotImage in ipairs(slotImages) do
 				slotImage.Image = "rbxthumb://type=AvatarHeadShot&id=1&w=420&h=420"
@@ -840,8 +832,17 @@ end)
 
 -------------------------------------------------------------------------------------------------------------------------------
 
-getgenv.aamhandler = aamhandler
-getgenv.fixid = fixid
-getgenv.addCommandEntry = addCommandEntry
+task.spawn(function()
+	repeat task.wait() until plrs.LocalPlayer.Character
+	for _, plr in ipairs(plrs:GetPlayers()) do aam.monitor(plr) end
+	plrs.PlayerAdded:Connect(function(plr) aam.monitor(plr) end)
+end)
+
+task.spawn(function()
+	if not aam.checking then
+		while task.wait(5) do aam.requesthandshake() end
+	end
+	aam.checking = true
+end)
 
 -------------------------------------------------------------------------------------------------------------------------------
