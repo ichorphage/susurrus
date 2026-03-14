@@ -9,10 +9,6 @@
 
 ---------------------------------------------------------------------------------------------------------------------------]]--
 
-if not game:IsLoaded() then game.Loaded:Wait() end local t = task.wait
-
--------------------------------------------------------------------------------------------------------------------------------
-
 local plrs = game:GetService("Players")
 local reps = game:GetService("ReplicatedStorage")
 local rs = game:GetService("RunService")
