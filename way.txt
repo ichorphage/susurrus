@@ -1,5 +1,4 @@
 load.lua
 └ setup
-  ├ altside.lua
-  ├ controllerside.lua
+  ├ init.lua
   └ commands.lua
