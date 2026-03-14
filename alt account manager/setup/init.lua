@@ -485,7 +485,7 @@ layout.Padding = UDim.new(0, 2)
 layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.Parent = commandslist
 
-function aam.addCommandEntry(commandName, commandDescription)
+function aam.tocmdlist(commandName, commandDescription)
 	local entry = Instance.new("TextLabel")
 	entry.Name = commandName
 	entry.Size = UDim2.new(1, 0, 0, 14)
