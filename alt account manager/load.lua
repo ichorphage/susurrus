@@ -9,6 +9,10 @@
 
 ---------------------------------------------------------------------------------------------------------------------------]]--
 
+if not game:IsLoaded() then game.Loaded:Wait() end
+
+-------------------------------------------------------------------------------------------------------------------------------
+
 local path = "https://raw.githubusercontent.com/noregexp/susurrus/refs/heads/main/alt%20account%20manager/setup/"
 
 local function load(file)
