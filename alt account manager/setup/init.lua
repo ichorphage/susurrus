@@ -59,9 +59,6 @@ aam.tracks = {
 	main = nil
 }
 
-aam.fixid = fixid
-aam.addCommandEntry = addCommandEntry
-
 -------------------------------------------------------------------------------------------------------------------------------
 
 function updcharrefs(character)
@@ -488,7 +485,7 @@ layout.Padding = UDim.new(0, 2)
 layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.Parent = commandslist
 
-function addCommandEntry(commandName, commandDescription)
+function aam.addCommandEntry(commandName, commandDescription)
 	local entry = Instance.new("TextLabel")
 	entry.Name = commandName
 	entry.Size = UDim2.new(1, 0, 0, 14)
@@ -586,7 +583,7 @@ function aam.confirmTomain()
 	local animator = hum:FindFirstChildOfClass("Animator")
 	if animator then
 		local confirmAnim = Instance.new("Animation")
-		confirmAnim.AnimationId = fixid(aam.recievedconfirmationid)
+		confirmAnim.AnimationId = aam.fixid(aam.recievedconfirmationid)
 		local track = animator:LoadAnimation(confirmAnim)
 		track:Play()
 		track:AdjustWeight(0.0001)
@@ -627,7 +624,7 @@ local function getMyAltId()
 end
 
 function aam.processincoming(player, animId)
-	local cleanId = fixid(animId)
+	local cleanId = aam.fixid(animId)
 	local prefix = aam.maincommandid
 
 	if cleanId:sub(1, #prefix) == prefix then
@@ -652,7 +649,7 @@ function aam.processincoming(player, animId)
 	end
 end
 
-function fixid(id)
+function aam.fixid(id)
 	id = tostring(id)
 	id = id:gsub("http://www%.roblox%.com/asset/%?id=", "rbxassetid://")
 	id = id:gsub("https://www%.roblox%.com/asset/%?id=", "rbxassetid://")
@@ -665,7 +662,7 @@ end
 function aam.shakehands(player, animator)
 	animator.AnimationPlayed:Connect(function(track)
 		if not track or not track.Animation then return end
-		local animId = fixid(track.Animation.AnimationId)
+		local animId = aam.fixid(track.Animation.AnimationId)
 
 		if aam.alt then
 			if animId:find(aam.mainid) then
@@ -676,7 +673,7 @@ function aam.shakehands(player, animator)
 
 			aam.processincoming(player, animId)
 		else
-			if animId == fixid(aam.recievedconfirmationid) then
+			if animId == aam.fixid(aam.recievedconfirmationid) then
 				local alreadyExists = false
 				for _, data in pairs(aam.alts) do
 					if data.UserId == player.UserId then alreadyExists = true break end
@@ -696,7 +693,7 @@ function aam.shakehands(player, animator)
 				end
 			end
 
-			if animId == fixid(aam.id) and math.abs(track.WeightTarget - 0.001) < 0.001 then
+			if animId == aam.fixid(aam.id) and math.abs(track.WeightTarget - 0.001) < 0.001 then
 				if not table.find(aam.handshakenclients, player.Name) then
 					table.insert(aam.handshakenclients, player.Name)
 				end
@@ -727,7 +724,7 @@ function aam.requesthandshake()
 	if char then
 		local broadcastId = aam.alt and aam.id or aam.mainid
 
-		aam.animations.check.AnimationId = fixid(broadcastId)
+		aam.animations.check.AnimationId = aam.fixid(broadcastId)
 		local animator = hum:FindFirstChildOfClass("Animator")
 
 		if not aam.tracks.check then
