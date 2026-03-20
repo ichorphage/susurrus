@@ -1,4 +1,0 @@
-load.lua
-└ setup
-  ├ init.lua
-  └ commands.lua
