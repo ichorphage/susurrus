@@ -2,7 +2,12 @@
 
 **Alt Account Manager** by **stunt** & **ksu**
 
-loadstring: `loadstring(game:HttpGet("https://raw.githubusercontent.com/noregexp/susurrus/refs/heads/main/alt%20account%20manager/load.lua"))()`
+extracted from [unable](https://www.roblox.com/users/878865655/profile)'s "skiding.rbxl" file
+
+# loadstring
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/noregexp/susurrus/refs/heads/main/alt%20account%20manager/load.lua"))()
+```
 
 # visualization
 
